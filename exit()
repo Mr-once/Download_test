@@ -1,0 +1,27 @@
+[1mdiff --git a/app/src/main/java/com/example/mronce/download_test/DownloadTask.java b/app/src/main/java/com/example/mronce/download_test/DownloadTask.java[m
+[1mindex c047e8f..e866ea7 100644[m
+[1m--- a/app/src/main/java/com/example/mronce/download_test/DownloadTask.java[m
+[1m+++ b/app/src/main/java/com/example/mronce/download_test/DownloadTask.java[m
+[36m@@ -104,7 +104,7 @@[m [mpublic class DownloadTask extends AsyncTask <String,Integer,Integer>{[m
+         return TYPE_FAILED;[m
+     }[m
+ [m
+[31m-    [m
+[32m+[m
+ [m
+     @Override[m
+     protected void onProgressUpdate(Integer...values) {//实时更新进程[m
+[36m@@ -137,7 +137,12 @@[m [mpublic class DownloadTask extends AsyncTask <String,Integer,Integer>{[m
+ [m
+         }[m
+     }[m
+[31m-[m
+[32m+[m[32m    public void pauseDownload(){[m
+[32m+[m[32m        isPaused=true;[m
+[32m+[m[32m    }[m
+[32m+[m[32m    public void cancelDownload(){[m
+[32m+[m[32m        isCanceled=true;[m
+[32m+[m[32m    }[m
+ [m
+ [m
+     private long getContentLength(String downloadUrl) {[m

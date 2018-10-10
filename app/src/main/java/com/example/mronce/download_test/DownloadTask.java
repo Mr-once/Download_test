@@ -104,7 +104,7 @@ public class DownloadTask extends AsyncTask <String,Integer,Integer>{
         return TYPE_FAILED;
     }
 
-    
+
 
     @Override
     protected void onProgressUpdate(Integer...values) {//实时更新进程
@@ -137,10 +137,23 @@ public class DownloadTask extends AsyncTask <String,Integer,Integer>{
 
         }
     }
+    public void pauseDownload(){
+        isPaused=true;
+    }
+    public void cancelDownload(){
+        isCanceled=true;
+    }
 
 
-
-    private long getContentLength(String downloadUrl) {
+    private long getContentLength(String downloadUrl) throws IOException {
+        OkHttpClient client=new OkHttpClient();
+        Request request=new Request.Builder().url(downloadUrl).build();
+        Response response=client.newCall(request).execute();
+        if (response!=null&&response.isSuccessful()){
+            long contentLength=response.body().contentLength();
+            response.body().close();
+            return contentLength;
+        }
         return 0;
     }
 }
