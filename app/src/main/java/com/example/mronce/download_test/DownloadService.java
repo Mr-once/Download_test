@@ -79,7 +79,7 @@ public class DownloadService extends Service {
                 if (file.exists()){
                     file.delete();
                 }
-                getNotificationManager().cancel("下载取消",1);
+                getNotificationManager().cancel(1);
                 stopForeground(true);
 
             }
@@ -94,7 +94,7 @@ public class DownloadService extends Service {
         return (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
     }
     private Notification getNotification (String title,int progress){//创建通知，前台服务的前提
-        Intent intent=new Intent(this,MainActivity.class) ;
+        Intent intent=new Intent(this,Main2Activity.class) ;
         PendingIntent pendingIntent=PendingIntent.getActivity(this,0,intent,0);
         NotificationCompat.Builder builder=new NotificationCompat.Builder(this);
         builder.setSmallIcon(R.mipmap.ic_launcher);
