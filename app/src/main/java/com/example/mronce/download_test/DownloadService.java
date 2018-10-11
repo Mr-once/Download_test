@@ -7,9 +7,12 @@ import android.app.Service;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.Binder;
+import android.os.Environment;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.widget.Toast;
+
+import java.io.File;
 
 public class DownloadService extends Service {
     private DownloadTask downloadTask;
@@ -51,7 +54,36 @@ public class DownloadService extends Service {
         }
     };
     class DownloadBinder extends Binder{//自定义Binder绑定服务与activity,服务与活动通讯
+        public void StartDownload(String url){//暴露给活动的开始下载的方法
+                if (downloadTask==null){
+                    downloadUrl=url;
+                    downloadTask =new DownloadTask(listener);
+                    downloadTask.execute(downloadUrl);
+                    startForeground(1,getNotification("下载中...",0));
 
+                }
+        }
+        public void PauseDownload(){//暂停下载
+                if (downloadTask!=null){
+                    downloadTask.pauseDownload();
+                }
+        }
+        public void CancelDownload(){//取消下载
+            if (downloadTask!=null){
+                downloadTask.cancelDownload();
+            }
+            if (downloadUrl!=null){
+                String fileName=downloadUrl.substring((downloadUrl.lastIndexOf("/")));
+                String directory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath();
+                File file = new File(directory + fileName);
+                if (file.exists()){
+                    file.delete();
+                }
+                getNotificationManager().cancel("下载取消",1);
+                stopForeground(true);
+
+            }
+        }
     }
     private DownloadBinder mBinder=new DownloadBinder();
     @Override
