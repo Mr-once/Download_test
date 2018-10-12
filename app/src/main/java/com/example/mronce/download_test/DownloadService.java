@@ -1,6 +1,7 @@
 package com.example.mronce.download_test;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -18,6 +19,7 @@ public class DownloadService extends Service {
     private DownloadTask downloadTask;
     private String downloadUrl;
     private int pause_progress=0;
+    NotificationManager notificationManager;
 
     private DownloadListener listener=new DownloadListener() {
         @Override
@@ -59,7 +61,7 @@ public class DownloadService extends Service {
                     downloadUrl=url;
                     downloadTask =new DownloadTask(listener);
                     downloadTask.execute(downloadUrl);
-                    startForeground(1,getNotification("下载中...",0));
+                    startForeground(1,getNotification("下载中...",pause_progress));
 
                 }
         }
@@ -91,21 +93,33 @@ public class DownloadService extends Service {
        return mBinder;
     }
     private NotificationManager getNotificationManager(){//通知管理器
-        return (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+        notificationManager=(NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        return notificationManager;
     }
     private Notification getNotification (String title,int progress){//创建通知，前台服务的前提
         Intent intent=new Intent(this,Main2Activity.class) ;
         PendingIntent pendingIntent=PendingIntent.getActivity(this,0,intent,0);
         NotificationCompat.Builder builder=new NotificationCompat.Builder(this);
-        builder.setSmallIcon(R.mipmap.ic_launcher);
-        builder.setLargeIcon(BitmapFactory.decodeResource(getResources(),R.mipmap.ic_launcher));//图片加载
-        builder.setContentIntent(pendingIntent);
-        builder.setContentTitle(title);
-        if (progress>=0){
-            //当进度大于或者等于0时才显示进度
-            builder.setContentText(progress+"%");
-            builder.setProgress(100,progress,false);
+        NotificationChannel b;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            b = new NotificationChannel("689","乱七八糟的其他信息",         NotificationManager.IMPORTANCE_HIGH);
+
+                getNotificationManager().createNotificationChannel(b);
+
+            builder.setChannelId("689");
         }
+
+
+            builder.setSmallIcon(R.mipmap.ic_launcher);
+            builder.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher));//图片加载
+            builder.setContentIntent(pendingIntent);
+            builder.setContentTitle(title);
+            if (progress >= 0) {
+                //当进度大于或者等于0时才显示进度
+                builder.setContentText(progress + "%");
+                builder.setProgress(100, progress, false);
+            }
+
         return builder.build();
     }
 }
